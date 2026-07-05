@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sarah Yoga Class Builder</title>
+  <style>
+    :root {
+      --paper: #fbf8f1;
+      --panel: #fffdf8;
+      --ink: #26312d;
+      --muted: #6d766f;
+      --line: #ddd5c8;
+      --sage: #5e7f68;
+      --sage-soft: #dfe9e2;
+      --blue: #55778f;
+      --clay: #b57961;
+      --cream: #f1eadc;
+      --shadow: 0 14px 40px rgba(47, 52, 45, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ebe5da;
+      font-family: "Avenir Next", "Inter", "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      padding: 24px 32px 18px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: grid;
+      gap: 5px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: #233a2d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 36px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      min-height: 38px;
+      padding: 8px 12px;
+      color: var(--ink);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-weight: 700;
+    }
+
+    .btn:hover {
+      border-color: rgba(94, 127, 104, 0.55);
+    }
+
+    .btn.primary {
+      color: white;
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+
+    .btn.subtle {
+      color: var(--sage);
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(520px, 1fr) 430px;
+      gap: 18px;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 32px 32px;
+    }
+
+    .rail,
+    .workspace,
+    .output {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .rail {
+      align-self: start;
+      overflow: hidden;
+    }
+
+    .rail-title,
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rail-title strong,
+    .section-head strong {
+      color: #324238;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .week-list {
+      display: grid;
+      padding: 8px;
+      gap: 4px;
+    }
+
+    .week-tab {
+      display: grid;
+      gap: 2px;
+      width: 100%;
+      padding: 10px;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+    }
+
+    .week-tab:hover,
+    .week-tab.active {
+      background: #f2eee4;
+      border-color: var(--line);
+    }
+
+    .week-tab .num {
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .week-tab .name {
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .workspace {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .week-editor {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 20px;
+      background: linear-gradient(90deg, rgba(223, 233, 226, 0.55), transparent);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .week-title-wrap {
+      display: grid;
+      gap: 4px;
+    }
+
+    .week-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    h2 {
+      margin: 0;
+      color: #233a2d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .week-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .title-edit {
+      display: none;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .title-edit.active {
+      display: flex;
+    }
+
+    .title-edit input {
+      min-width: 280px;
+      height: 38px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: white;
+    }
+
+    .tools {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tool-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip,
+    .move-card {
+      position: relative;
+    }
+
+    .chip input,
+    .move-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chip span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 10px;
+      color: var(--ink);
+      background: #f8f4ec;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chip input:checked + span {
+      color: #254131;
+      background: var(--sage-soft);
+      border-color: rgba(94, 127, 104, 0.55);
+    }
+
+    .moves {
+      padding: 18px 20px 20px;
+    }
+
+    .category-block + .category-block {
+      margin-top: 20px;
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--sage);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .category-title::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .move-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .move-card > span {
+      display: grid;
+      gap: 4px;
+      min-height: 74px;
+      padding: 11px 12px 10px 38px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .move-card > span::before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 13px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #b8b1a5;
+      border-radius: 4px;
+      background: white;
+    }
+
+    .move-card input:checked + span {
+      background: #f5f8f2;
+      border-color: rgba(94, 127, 104, 0.55);
+    }
+
+    .move-card input:checked + span::before {
+      background: var(--sage);
+      border-color: var(--sage);
+      box-shadow: inset 0 0 0 3px white;
+    }
+
+    .move-name {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .move-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .output {
+      align-self: start;
+      position: sticky;
+      top: 16px;
+      overflow: hidden;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .template-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .template-btn {
+      display: grid;
+      gap: 4px;
+      width: 100%;
+      padding: 11px;
+      text-align: left;
+      background: #f8f4ec;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .template-btn.active {
+      background: var(--sage-soft);
+      border-color: rgba(94, 127, 104, 0.65);
+    }
+
+    .template-btn strong {
+      font-size: 14px;
+    }
+
+    .template-btn span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .preview {
+      padding: 16px;
+      max-height: calc(100vh - 270px);
+      overflow: auto;
+    }
+
+    .class-sheet {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .class-sheet h3 {
+      margin: 0 0 3px;
+      color: #233a2d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .sheet-meta {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .segment {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .segment:first-of-type {
+      border-top: 0;
+    }
+
+    .segment-time {
+      color: var(--clay);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+    }
+
+    .segment-body strong {
+      display: block;
+      color: var(--sage);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .segment-body p {
+      margin: 4px 0 0;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 14px;
+      background: #f8f4ec;
+      border-top: 1px solid var(--line);
+    }
+
+    .actions .wide {
+      grid-column: 1 / -1;
+    }
+
+    .empty {
+      padding: 28px 18px;
+      color: var(--muted);
+      text-align: center;
+      background: #f8f4ec;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      display: none;
+      padding: 10px 13px;
+      color: white;
+      background: #2f4939;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      font-weight: 800;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 1120px) {
+      .layout {
+        grid-template-columns: 220px 1fr;
+      }
+
+      .output {
+        grid-column: 1 / -1;
+        position: static;
+      }
+    }
+
+    @media (max-width: 820px) {
+      header {
+        padding: 18px;
+      }
+
+      .topbar,
+      .layout,
+      .week-editor,
+      .move-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .layout {
+        padding: 14px;
+      }
+
+      .header-actions {
+        flex-wrap: wrap;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      header,
+      .rail,
+      .workspace,
+      .section-head,
+      .template-list,
+      .actions {
+        display: none !important;
+      }
+
+      .layout {
+        display: block;
+        max-width: none;
+        padding: 0;
+      }
+
+      .output {
+        display: block;
+        width: 100%;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .preview {
+        max-height: none;
+        padding: 0;
+      }
+
+      .class-sheet {
+        width: 8.5in;
+        min-height: 11in;
+        padding: 0.6in;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="eyebrow">Gentle Monday Flow</div>
+          <h1>Sarah's Class Builder</h1>
+        </div>
+        <div class="header-actions">
+          <button class="btn" id="resetWeekBtn" type="button">Reset Week</button>
+          <button class="btn primary" id="generateBtn" type="button">Generate Class Templates</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="rail">
+        <div class="rail-title">
+          <strong>Weeks</strong>
+          <span class="count" id="weekCount">1 of 8</span>
+        </div>
+        <div class="week-list" id="weekList"></div>
+      </aside>
+
+      <main class="workspace">
+        <section class="week-editor">
+          <div class="week-title-wrap">
+            <div class="week-title-row">
+              <h2 id="weekTitle">Creating Space</h2>
+              <button class="btn subtle" id="editTitleBtn" type="button">Change week title</button>
+            </div>
+            <div class="title-edit" id="titleEdit">
+              <input id="titleInput" type="text" value="Creating Space">
+              <button class="btn primary" id="saveTitleBtn" type="button">Save</button>
+            </div>
+            <p class="week-subtitle">Choose the moves and tools Sarah wants available this week. The app will arrange them into several class options.</p>
+          </div>
+        </section>
+
+        <section class="tools">
+          <div class="category-title">Available Tools</div>
+          <div class="tool-grid" id="toolGrid"></div>
+        </section>
+
+        <section class="moves">
+          <div id="moveGroups"></div>
+        </section>
+      </main>
+
+      <aside class="output">
+        <div class="section-head">
+          <strong>Generated Options</strong>
+          <span class="count" id="selectedCount">0 moves</span>
+        </div>
+        <div class="template-list" id="templateList">
+          <div class="empty">Select a few moves, choose available tools, then generate class templates.</div>
+        </div>
+        <div class="preview" id="preview">
+          <div class="empty">The chosen class template will appear here.</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="printBtn" type="button">Print / Save PDF</button>
+          <button class="btn" id="copyChecklistBtn" type="button">Copy Notes Checklist</button>
+          <button class="btn wide" id="downloadChecklistBtn" type="button">Download Email Checklist File</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied</div>
+
+  <script>
+    const defaultWeeks = [
+      "Creating Space",
+      "Finding Breath",
+      "Trusting Support",
+      "Grounded Strength",
+      "Softening Resistance",
+      "Spacious Balance",
+      "Graceful Transitions",
+      "Carrying Calm Forward"
+    ];
+
+    const tools = [
+      "Wall",
+      "Chair",
+      "Blanket",
+      "Blocks",
+      "Strap",
+      "Bolster",
+      "Mat",
+      "Eye pillow"
+    ];
+
+    const moves = [
+      { name: "Diaphragmatic Breathing", group: "Warmup / Breathing", note: "settling, nervous system" },
+      { name: "Seated Neck Releases", group: "Warmup / Breathing", note: "neck and shoulders" },
+      { name: "Shoulder Rolls", group: "Warmup / Breathing", note: "upper back mobility" },
+      { name: "Seated Side Bend", group: "Warmup / Breathing", note: "rib and side body" },
+      { name: "Seated Twist", group: "Warmup / Breathing", note: "gentle spinal rotation" },
+      { name: "Cat/Cow", group: "Mobility", note: "spinal mobility" },
+      { name: "Thread the Needle", group: "Mobility", note: "shoulders and upper back" },
+      { name: "Child's Pose", group: "Mobility", note: "rest and breath" },
+      { name: "Puppy Pose", group: "Mobility", note: "shoulders, chest" },
+      { name: "Low Lunge", group: "Mobility", note: "hips and hip flexors" },
+      { name: "Tabletop Hip Circles", group: "Mobility", note: "hips and lower back" },
+      { name: "Wrist and Finger Stretch", group: "Mobility", note: "hands and forearms" },
+      { name: "Ankle Circles", group: "Mobility", note: "ankle mobility" },
+      { name: "Pelvic Tilts", group: "Mobility", note: "low back awareness" },
+      { name: "Bird Dog Prep", group: "Mobility", note: "core and coordination" },
+      { name: "Mountain Pose", group: "Mid-Class Standing", note: "posture and grounding" },
+      { name: "Half Sun Salutation", group: "Mid-Class Standing", note: "gentle flow" },
+      { name: "Chair Pose Prep", group: "Mid-Class Standing", note: "leg strength" },
+      { name: "Warrior I", group: "Mid-Class Standing", note: "steady strength" },
+      { name: "Warrior II", group: "Mid-Class Standing", note: "hips and confidence" },
+      { name: "Triangle Prep", group: "Mid-Class Standing", note: "side body, hamstrings" },
+      { name: "Wide-Legged Fold", group: "Mid-Class Standing", note: "supported forward fold" },
+      { name: "Chair Sun Breaths", group: "Mid-Class Standing", note: "supported flow" },
+      { name: "Standing Side Bend", group: "Mid-Class Standing", note: "side body" },
+      { name: "Standing Cat/Cow", group: "Mid-Class Standing", note: "spine with chair support" },
+      { name: "Supported Pyramid Prep", group: "Mid-Class Standing", note: "hamstrings and hips" },
+      { name: "Goddess Pose Prep", group: "Mid-Class Standing", note: "legs and posture" },
+      { name: "Tree Pose", group: "Balance", note: "standing balance" },
+      { name: "Supported Knee Lifts", group: "Balance", note: "balance and hip mobility" },
+      { name: "Heel Raises", group: "Balance", note: "feet and calves" },
+      { name: "Tandem Stance", group: "Balance", note: "practical balance" },
+      { name: "Side Leg Lifts", group: "Balance", note: "hip stability" },
+      { name: "Kickstand Balance", group: "Balance", note: "accessible balance" },
+      { name: "Wall Warrior III Prep", group: "Balance", note: "supported strength" },
+      { name: "Bridge Pose", group: "Cooldown", note: "spine and glutes" },
+      { name: "Figure-Four Stretch", group: "Cooldown", note: "outer hips" },
+      { name: "Supine Twist", group: "Cooldown", note: "spinal release" },
+      { name: "Reclined Bound Angle", group: "Cooldown", note: "restorative hips" },
+      { name: "Knees-to-Chest", group: "Cooldown", note: "low back release" },
+      { name: "Windshield Wipers", group: "Cooldown", note: "gentle hip rotation" },
+      { name: "Supine Hamstring Stretch", group: "Cooldown", note: "back of legs" },
+      { name: "Legs on Chair", group: "Cooldown", note: "restorative reset" },
+      { name: "Constructive Rest", group: "Cooldown", note: "neutral rest shape" },
+      { name: "Savasana", group: "Reflection", note: "closing rest" },
+      { name: "Body Scan", group: "Reflection", note: "guided awareness" },
+      { name: "Three-Part Breath", group: "Reflection", note: "breath reflection" },
+      { name: "Gratitude Reflection", group: "Reflection", note: "closing theme" },
+      { name: "Silent Rest", group: "Reflection", note: "quiet integration" }
+    ];
+
+    const templateStyles = [
+      {
+        name: "Steady Gentle Flow",
+        summary: "A balanced 50-minute class with a familiar arc from breath to standing flow to rest.",
+        pacing: "balanced",
+        reflection: "Let the body remember what steadiness feels like. One breath, one choice, one moment at a time."
+      },
+      {
+        name: "Chair + Wall Supported",
+        summary: "A practical, confidence-building option that keeps support available throughout class.",
+        pacing: "supported",
+        reflection: "Support gives the body permission to soften. From that softness, confidence can grow."
+      },
+      {
+        name: "Slow Restorative Finish",
+        summary: "A quieter version with shorter standing work and more time for cooldown and reflection.",
+        pacing: "restorative",
+        reflection: "There is no rush to arrive. The practice is already working when we slow down enough to feel it."
+      }
+    ];
+
+    const state = {
+      activeWeek: 0,
+      weeks: defaultWeeks.map((title) => ({
+        title,
+        selectedMoves: [],
+        selectedTools: ["Wall", "Chair", "Blanket", "Blocks", "Mat"]
+      })),
+      generated: [],
+      selectedTemplate: 0
+    };
+
+    const els = {
+      weekList: document.getElementById("weekList"),
+      weekCount: document.getElementById("weekCount"),
+      weekTitle: document.getElementById("weekTitle"),
+      editTitleBtn: document.getElementById("editTitleBtn"),
+      titleEdit: document.getElementById("titleEdit"),
+      titleInput: document.getElementById("titleInput"),
+      saveTitleBtn: document.getElementById("saveTitleBtn"),
+      toolGrid: document.getElementById("toolGrid"),
+      moveGroups: document.getElementById("moveGroups"),
+      selectedCount: document.getElementById("selectedCount"),
+      generateBtn: document.getElementById("generateBtn"),
+      templateList: document.getElementById("templateList"),
+      preview: document.getElementById("preview"),
+      printBtn: document.getElementById("printBtn"),
+      copyChecklistBtn: document.getElementById("copyChecklistBtn"),
+      downloadChecklistBtn: document.getElementById("downloadChecklistBtn"),
+      resetWeekBtn: document.getElementById("resetWeekBtn"),
+      toast: document.getElementById("toast")
+    };
+
+    function activeWeek() {
+      return state.weeks[state.activeWeek];
+    }
+
+    function groupedMoves() {
+      return moves.reduce((groups, move) => {
+        groups[move.group] = groups[move.group] || [];
+        groups[move.group].push(move);
+        return groups;
+      }, {});
+    }
+
+    function save() {
+      localStorage.setItem("sarahYogaClassBuilder", JSON.stringify(state.weeks));
+    }
+
+    function load() {
+      const saved = localStorage.getItem("sarahYogaClassBuilder");
+      if (!saved) return;
+      try {
+        const weeks = JSON.parse(saved);
+        if (Array.isArray(weeks) && weeks.length === 8) {
+          state.weeks = weeks;
+        }
+      } catch (error) {
+        console.warn("Could not load saved class builder state", error);
+      }
+    }
+
+    function renderWeeks() {
+      els.weekList.innerHTML = "";
+      state.weeks.forEach((week, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `week-tab ${index === state.activeWeek ? "active" : ""}`;
+        button.innerHTML = `<span class="num">Week ${index + 1}</span><span class="name">${week.title}</span>`;
+        button.addEventListener("click", () => {
+          state.activeWeek = index;
+          state.generated = [];
+          state.selectedTemplate = 0;
+          render();
+        });
+        els.weekList.appendChild(button);
+      });
+      els.weekCount.textContent = `${state.activeWeek + 1} of 8`;
+    }
+
+    function renderTools() {
+      const week = activeWeek();
+      els.toolGrid.innerHTML = "";
+      tools.forEach((tool) => {
+        const label = document.createElement("label");
+        label.className = "chip";
+        label.innerHTML = `<input type="checkbox" ${week.selectedTools.includes(tool) ? "checked" : ""}><span>${tool}</span>`;
+        label.querySelector("input").addEventListener("change", (event) => {
+          if (event.target.checked) {
+            week.selectedTools.push(tool);
+          } else {
+            week.selectedTools = week.selectedTools.filter((item) => item !== tool);
+          }
+          save();
+          renderOutput();
+        });
+        els.toolGrid.appendChild(label);
+      });
+    }
+
+    function renderMoves() {
+      const week = activeWeek();
+      const groups = groupedMoves();
+      els.moveGroups.innerHTML = "";
+      Object.entries(groups).forEach(([groupName, groupMoves]) => {
+        const section = document.createElement("section");
+        section.className = "category-block";
+        section.innerHTML = `<div class="category-title">${groupName}</div><div class="move-grid"></div>`;
+        const grid = section.querySelector(".move-grid");
+        groupMoves.forEach((move) => {
+          const label = document.createElement("label");
+          label.className = "move-card";
+          label.innerHTML = `
+            <input type="checkbox" ${week.selectedMoves.includes(move.name) ? "checked" : ""}>
+            <span><span class="move-name">${move.name}</span><span class="move-meta">${move.note}</span></span>
+          `;
+          label.querySelector("input").addEventListener("change", (event) => {
+            if (event.target.checked) {
+              week.selectedMoves.push(move.name);
+            } else {
+              week.selectedMoves = week.selectedMoves.filter((item) => item !== move.name);
+            }
+            save();
+            renderOutput();
+          });
+          grid.appendChild(label);
+        });
+        els.moveGroups.appendChild(section);
+      });
+    }
+
+    function movesInGroup(group) {
+      const selected = activeWeek().selectedMoves;
+      return moves
+        .filter((move) => move.group === group && selected.includes(move.name))
+        .map((move) => move.name);
+    }
+
+    function fallback(group, names) {
+      const selected = movesInGroup(group);
+      return selected.length ? selected : names;
+    }
+
+    function makeTemplate(style) {
+      const week = activeWeek();
+      const warmup = [
+        ...fallback("Warmup / Breathing", ["Diaphragmatic Breathing", "Seated Neck Releases"]),
+        ...fallback("Mobility", ["Cat/Cow"]).slice(0, 2)
+      ];
+      const standing = fallback("Mid-Class Standing", ["Mountain Pose", "Half Sun Salutation", "Warrior II"]);
+      const balance = fallback("Balance", ["Tree Pose"]);
+      const cooldown = fallback("Cooldown", ["Figure-Four Stretch", "Supine Twist"]);
+      const reflection = fallback("Reflection", ["Savasana"]);
+      const support = week.selectedTools.length ? week.selectedTools.join(", ") : "Mat";
+
+      if (style.pacing === "supported") {
+        return {
+          title: style.name,
+          summary: style.summary,
+          segments: [
+            ["0-6", "Arrival + Breath", pick(warmup, 2).join(" -> "), `Set everyone near available support: ${support}.`],
+            ["6-16", "Supported Warm-Up", pick([...warmup, "Chair-supported Cat/Cow"], 4).join(" -> "), "Offer chair and wall versions before floor versions."],
+            ["16-31", "Supported Standing", pick(["Mountain Pose", ...standing, "Chair-supported lunge"], 4).join(" -> "), "Keep stance lengths small and transitions slow."],
+            ["31-39", "Balance Practice", pick(["Wall-supported Tree", ...balance, "Supported Knee Lifts"], 3).join(" -> "), "Normalize touching down and restarting."],
+            ["39-47", "Floor + Release", pick(cooldown, 3).join(" -> "), "Use props to make the floor feel closer."],
+            ["47-50", "Closing", reflection.join(" -> "), style.reflection]
+          ]
+        };
+      }
+
+      if (style.pacing === "restorative") {
+        return {
+          title: style.name,
+          summary: style.summary,
+          segments: [
+            ["0-7", "Arrival + Breath", pick(warmup, 3).join(" -> "), "Begin quietly and leave space after each cue."],
+            ["7-17", "Gentle Mobility", pick([...warmup, ...fallback("Mobility", ["Cat/Cow", "Child's Pose"])], 4).join(" -> "), "Keep movements slow, small, and breath-led."],
+            ["17-30", "Simple Standing", pick(["Mountain Pose", ...standing], 3).join(" -> "), "Short standing section with no rushed transitions."],
+            ["30-37", "Optional Balance", pick(balance, 2).join(" -> "), "Offer this as optional, with wall or chair support."],
+            ["37-48", "Long Cooldown", pick([...cooldown, "Reclined Bound Angle"], 4).join(" -> "), "Let the class visibly downshift."],
+            ["48-50", "Reflection", reflection.join(" -> "), style.reflection]
+          ]
+        };
+      }
+
+      return {
+        title: style.name,
+        summary: style.summary,
+        segments: [
+          ["0-5", "Arrival + Breath", pick(warmup, 2).join(" -> "), "Set a calm pace and invite students to move at 70% effort."],
+          ["5-15", "Warm-Up", pick([...warmup, ...fallback("Mobility", ["Cat/Cow", "Thread the Needle"])], 4).join(" -> "), "Build spinal mobility before standing work."],
+          ["15-33", "Mid-Class Flow", pick(["Mountain Pose", ...standing], 4).join(" -> "), "Use breath-led transitions and steady setup cues."],
+          ["33-40", "Balance", pick(balance, 3).join(" -> "), "Keep support available and make resets normal."],
+          ["40-47", "Cooldown", pick(cooldown, 3).join(" -> "), "Soften the voice and slow the transitions."],
+          ["47-50", "Closing", reflection.join(" -> "), style.reflection]
+        ]
+      };
+    }
+
+    function pick(items, count) {
+      return [...new Set(items)].slice(0, count);
+    }
+
+    function generateTemplates() {
+      state.generated = templateStyles.map(makeTemplate);
+      state.selectedTemplate = 0;
+      renderOutput();
+    }
+
+    function selectedTemplate() {
+      return state.generated[state.selectedTemplate];
+    }
+
+    function renderTemplateList() {
+      els.templateList.innerHTML = "";
+      if (!state.generated.length) {
+        els.templateList.innerHTML = `<div class="empty">Select a few moves, choose available tools, then generate class templates.</div>`;
+        return;
+      }
+      state.generated.forEach((template, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `template-btn ${index === state.selectedTemplate ? "active" : ""}`;
+        button.innerHTML = `<strong>${template.title}</strong><span>${template.summary}</span>`;
+        button.addEventListener("click", () => {
+          state.selectedTemplate = index;
+          renderOutput();
+        });
+        els.templateList.appendChild(button);
+      });
+    }
+
+    function renderPreview() {
+      const week = activeWeek();
+      const template = selectedTemplate();
+      if (!template) {
+        els.preview.innerHTML = `<div class="empty">The chosen class template will appear here.</div>`;
+        return;
+      }
+
+      els.preview.innerHTML = `
+        <article class="class-sheet">
+          <h3>${week.title}</h3>
+          <p class="sheet-meta">${template.title} / 50 minutes / Tools: ${week.selectedTools.join(", ") || "Mat"}</p>
+          ${template.segments.map((segment) => `
+            <section class="segment">
+              <div class="segment-time">${segment[0]}</div>
+              <div class="segment-body">
+                <strong>${segment[1]}</strong>
+                <p>${segment[2]}</p>
+                <p>${segment[3]}</p>
+              </div>
+            </section>
+          `).join("")}
+        </article>
+      `;
+    }
+
+    function renderOutput() {
+      const count = activeWeek().selectedMoves.length;
+      els.selectedCount.textContent = `${count} ${count === 1 ? "move" : "moves"}`;
+      if (state.generated.length) {
+        state.generated = templateStyles.map(makeTemplate);
+      }
+      renderTemplateList();
+      renderPreview();
+    }
+
+    function checklistText() {
+      const week = activeWeek();
+      const template = selectedTemplate();
+      if (!template) return "";
+      const lines = [
+        `${week.title}`,
+        `${template.title} - 50 minutes`,
+        `Tools: ${week.selectedTools.join(", ") || "Mat"}`,
+        "",
+        ...template.segments.flatMap((segment) => [
+          `${segment[0]} ${segment[1]}`,
+          ...segment[2].split(" -> ").map((move) => `☐ ${move}`),
+          ""
+        ]),
+        "Reflection:",
+        template.segments[template.segments.length - 1][3]
+      ];
+      return lines.join("\n");
+    }
+
+    async function copyChecklist() {
+      const text = checklistText();
+      if (!text) return;
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      showToast("Checklist copied");
+    }
+
+    function downloadChecklist() {
+      const text = checklistText();
+      if (!text) return;
+      const safeTitle = activeWeek().title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${safeTitle}-notes-checklist.txt`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      window.setTimeout(() => els.toast.classList.remove("show"), 1400);
+    }
+
+    function resetWeek() {
+      const index = state.activeWeek;
+      state.weeks[index] = {
+        title: defaultWeeks[index],
+        selectedMoves: [],
+        selectedTools: ["Wall", "Chair", "Blanket", "Blocks", "Mat"]
+      };
+      state.generated = [];
+      state.selectedTemplate = 0;
+      save();
+      render();
+    }
+
+    function render() {
+      const week = activeWeek();
+      els.weekTitle.textContent = week.title;
+      els.titleInput.value = week.title;
+      els.titleEdit.classList.remove("active");
+      renderWeeks();
+      renderTools();
+      renderMoves();
+      renderOutput();
+    }
+
+    els.editTitleBtn.addEventListener("click", () => {
+      els.titleEdit.classList.toggle("active");
+      els.titleInput.focus();
+      els.titleInput.select();
+    });
+
+    els.saveTitleBtn.addEventListener("click", () => {
+      const title = els.titleInput.value.trim();
+      if (!title) return;
+      activeWeek().title = title;
+      save();
+      render();
+    });
+
+    els.titleInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        els.saveTitleBtn.click();
+      }
+    });
+
+    els.generateBtn.addEventListener("click", generateTemplates);
+    els.printBtn.addEventListener("click", () => window.print());
+    els.copyChecklistBtn.addEventListener("click", copyChecklist);
+    els.downloadChecklistBtn.addEventListener("click", downloadChecklist);
+    els.resetWeekBtn.addEventListener("click", resetWeek);
+
+    load();
+    render();
+  </script>
+</body>
+</html>
